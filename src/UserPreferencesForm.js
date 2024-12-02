@@ -121,7 +121,7 @@ Skills: ${selectedSkills.join(", ")}`
             </option>
           ))}
         </select>
-        <p>Selected City: {selectedCity || "None"}</p>
+        <p>Selected City: {selectedCity || " "}</p>
       </div>
 
       {/* Skills Checkboxes */}
