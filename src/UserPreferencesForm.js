@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import "./UserPreferencesForm.css"; // Importation de la feuille de styles
+import "./UserPreferencesForm.css"; // Import styles for a polished UI
 
 function UserPreferencesForm() {
   const [notificationMethod, setNotificationMethod] = useState("");
@@ -17,9 +17,22 @@ function UserPreferencesForm() {
   };
 
   const addCity = () => {
-    setCities([...cities, "Tokyo"]);
+    const newCity = prompt("Please enter the name of the city:");
+    if (newCity && !cities.includes(newCity)) {
+      setCities([...cities, newCity]);
+      setSelectedCity(newCity); // Automatically select the new city
+    } else if (newCity) {
+      alert("City already exists in the list!");
+    }
   };
-
+  const deleteCity = () => {
+    if (!selectedCity) {
+      alert("Please select a city to delete.");
+      return;
+    }
+    setCities(cities.filter((city) => city !== selectedCity));
+    setSelectedCity(""); // Reset selected city
+  };
   const handleSelectAll = () => {
     checkboxRefs.current.forEach((checkbox) => {
       checkbox.checked = true;
@@ -50,14 +63,14 @@ City: ${selectedCity}
 Skills: ${selectedSkills.join(", ")}`
     );
   };
-
+  
   return (
     <form className="form-container" onSubmit={handleSubmit}>
       <h2 className="form-title">User Preferences Form</h2>
 
-      {/* Radio buttons */}
+      {/* Notification Method */}
       <div className="form-section">
-        <h3 className="section-title">Notification Method : </h3>
+        <h3 className="section-title">Notification Method:</h3>
         <label className="radio-label">
           <input
             type="radio"
@@ -87,56 +100,44 @@ Skills: ${selectedSkills.join(", ")}`
         </div>
       </div>
 
-      {/* Select dynamique */}
+      {/* Dynamic City Selection */}
       <div className="form-section">
-        <h3 className="section-title">Select Your City : </h3>
+        <h3 className="section-title">Select Your City:</h3>
         <button type="button" className="btn" onClick={addCity}>
-          Add Tokyo
+          Add City
+        </button>
+        <button type="button" className="btn" onClick={deleteCity}>
+          Delete City
         </button>
         <select
           className="select-menu"
           value={selectedCity}
           onChange={handleCityChange}
         >
+          <option value="">-- Select a city --</option>
           {cities.map((city, index) => (
             <option key={index} value={city}>
               {city}
             </option>
           ))}
         </select>
-        <p>Selected City: {selectedCity}</p>
+        <p>Selected City: {selectedCity || "None"}</p>
       </div>
 
-      {/* Checkboxes */}
+      {/* Skills Checkboxes */}
       <div className="form-section">
-        <h3 className="section-title">Select Your Skills : </h3>
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            value="React"
-            ref={(el) => (checkboxRefs.current[0] = el)}
-            onChange={updateSelectedSkills}
-          />
-          React
-        </label>
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            value="Node.js"
-            ref={(el) => (checkboxRefs.current[1] = el)}
-            onChange={updateSelectedSkills}
-          />
-          Node.js
-        </label>
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            value="JavaScript"
-            ref={(el) => (checkboxRefs.current[2] = el)}
-            onChange={updateSelectedSkills}
-          />
-          JavaScript
-        </label>
+        <h3 className="section-title">Select Your Skills:</h3>
+        {["React", "Node.js", "JavaScript"].map((skill, index) => (
+          <label key={index} className="checkbox-label">
+            <input
+              type="checkbox"
+              value={skill}
+              ref={(el) => (checkboxRefs.current[index] = el)}
+              onChange={updateSelectedSkills}
+            />
+            {skill}
+          </label>
+        ))}
         <div className="checkbox-actions">
           <button type="button" className="btn" onClick={handleSelectAll}>
             Select All
@@ -145,10 +146,10 @@ Skills: ${selectedSkills.join(", ")}`
             Deselect All
           </button>
         </div>
-        <p>Selected Skills: {selectedSkills.join(", ")}</p>
+        <p>Selected Skills: {selectedSkills.join(", ") || "None"}</p>
       </div>
 
-      {/* Submit */}
+      {/* Submit Button */}
       <button className="btn submit-btn" type="submit">
         Submit
       </button>
